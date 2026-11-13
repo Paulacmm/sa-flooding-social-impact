@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FloodVision AI — Reporte de Severidad y Evacuación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        body {
+          background: white !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 text-slate-800 min-h-screen font-sans">
+    <!-- Header -->
+    <header class="bg-slate-900 text-white py-4 px-6 shadow-md">
+      <div
+        class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4"
+      >
+        <div class="flex items-center gap-3">
+          <div class="bg-blue-600 p-2 rounded-lg">
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight">
+              FloodVision AI Assessment
+            </h1>
+            <p class="text-xs text-slate-400">
+              Análisis de Severidad, Métricas de Riesgo y Rutas de Evacuación
+            </p>
+          </div>
+        </div>
+        <div
+          class="text-xs bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 text-slate-300"
+        >
+          Modelo:
+          <span class="font-mono text-blue-400">qwen3-vl-8b-instruct</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- COLUMNA IZQUIERDA: Carga y Vista Previa de Imagen (5 cols) -->
+        <section
+          class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-slate-200 p-5"
+        >
+          <h2
+            class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4"
+          >
+            1. Evidencia Visual
+          </h2>
+
+          <!-- Dropzone -->
+          <label
+            id="dropzone"
+            class="no-print flex flex-col items-center justify-center w-full h-44 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-blue-50 hover:border-blue-400 transition"
+          >
+            <div
+              class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4"
+            >
+              <svg
+                class="w-9 h-9 mb-2 text-slate-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <p class="text-sm text-slate-600">
+                <span class="font-semibold text-blue-600"
+                  >Haz clic para subir</span
+                >
+                o arrastra una foto
+              </p>
+              <p class="text-xs text-slate-400 mt-1">PNG, JPG o WEBP</p>
+            </div>
+            <input id="fileInput" type="file" accept="image/*" class="hidden" />
+          </label>
+
+          <!-- Image Preview -->
+          <div id="previewContainer" class="hidden mt-4">
+            <div
+              class="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-900"
+            >
+              <img
+                id="imagePreview"
+                src=""
+                alt="Imagen subida"
+                class="w-full max-h-[420px] object-contain mx-auto"
+              />
+            </div>
+            <div
+              class="flex items-center justify-between mt-3 text-xs text-slate-500"
+            >
+              <span id="fileName" class="truncate max-w-[220px]"
+                >archivo.png</span
+              >
+              <button
+                id="changeImgBtn"
+                class="no-print text-blue-600 hover:underline font-medium"
+              >
+                Cambiar foto
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            id="analyzeBtn"
+            disabled
+            class="no-print mt-5 w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-sm transition flex items-center justify-center gap-2"
+          >
+            <span id="btnText">Generar Reporte de Inundación</span>
+            <svg
+              id="btnSpinner"
+              class="hidden animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              ></path>
+            </svg>
+          </button>
+
+          <div
+            id="errorBox"
+            class="hidden mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg"
+          ></div>
+        </section>
+
+        <!-- COLUMNA DERECHA: Reporte Estructurado (7 cols) -->
+        <section
+          class="lg:col-span-7 bg-white rounded-xl shadow-sm border border-slate-200 p-6 min-h-[520px]"
+        >
+          <!-- Estado Inicial Vacío -->
+          <div
+            id="emptyState"
+            class="h-full min-h-[450px] flex flex-col items-center justify-center text-center text-slate-400"
+          >
+            <svg
+              class="w-14 h-14 mb-3 text-slate-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <p class="text-base font-medium text-slate-500">
+              Esperando imagen para evaluación
+            </p>
+            <p class="text-sm max-w-md mt-1">
+              Sube una fotografía de la zona afectada y presiona "Generar
+              Reporte" para obtener la severidad, métricas de riesgo y puntos de
+              evacuación.
+            </p>
+          </div>
+
+          <!-- Contenido del Reporte -->
+          <div id="reportContainer" class="hidden space-y-6">
+            <!-- Encabezado del Reporte -->
+            <div
+              class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-4"
+            >
+              <div>
+                <span
+                  class="text-xs font-bold uppercase tracking-wider text-blue-600"
+                  >Reporte Oficial de Evaluación</span
+                >
+                <h2 class="text-2xl font-bold text-slate-900 mt-0.5">
+                  Diagnóstico de Situación
+                </h2>
+                <p id="reportTimestamp" class="text-xs text-slate-400 mt-1"></p>
+              </div>
+              <div class="flex items-center gap-3">
+                <div
+                  id="severityBadge"
+                  class="px-4 py-2 rounded-lg font-bold text-sm uppercase tracking-wide border"
+                >
+                  SEVERIDAD: --
+                </div>
+                <button
+                  onclick="window.print()"
+                  class="no-print p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg border border-slate-200"
+                  title="Imprimir o guardar PDF"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3 Bulletpoints clave (7-10 palabras) -->
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+              <h3
+                class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3"
+              >
+                Observaciones Clave de Clasificación
+              </h3>
+              <ul id="reasonsList" class="space-y-2 text-sm text-slate-800">
+                <!-- Dinámico -->
+              </ul>
+            </div>
+
+            <!-- Ruta y Zona de Evacuación -->
+            <div
+              class="bg-emerald-50 border-l-4 border-emerald-600 rounded-r-xl p-4"
+            >
+              <div
+                class="flex items-center gap-2 text-emerald-800 font-bold text-sm uppercase tracking-wide mb-1"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                Zonas Seguras y Dirección de Evacuación
+              </div>
+              <p
+                id="evacuationText"
+                class="text-sm text-emerald-950 leading-relaxed"
+              ></p>
+            </div>
+
+            <!-- Grid de Métricas Adicionales -->
+            <div>
+              <h3
+                class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3"
+              >
+                Métricas Técnicas y Operativas
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-3.5 rounded-lg border border-slate-200 bg-white">
+                  <span class="text-xs text-slate-400 font-medium"
+                    >Profundidad Estimada del Agua</span
+                  >
+                  <p
+                    id="metricDepth"
+                    class="text-sm font-semibold text-slate-800 mt-1"
+                  >
+                    --
+                  </p>
+                </div>
+
+                <div class="p-3.5 rounded-lg border border-slate-200 bg-white">
+                  <span class="text-xs text-slate-400 font-medium"
+                    >Transitabilidad Vehicular</span
+                  >
+                  <p
+                    id="metricPassability"
+                    class="text-sm font-semibold text-slate-800 mt-1"
+                  >
+                    --
+                  </p>
+                </div>
+
+                <div class="p-3.5 rounded-lg border border-slate-200 bg-white">
+                  <span class="text-xs text-slate-400 font-medium"
+                    >Riesgos de Infraestructura / Eléctricos</span
+                  >
+                  <p
+                    id="metricHazards"
+                    class="text-sm font-semibold text-slate-800 mt-1"
+                  >
+                    --
+                  </p>
+                </div>
+
+                <div class="p-3.5 rounded-lg border border-slate-200 bg-white">
+                  <span class="text-xs text-slate-400 font-medium"
+                    >Prioridad de Rescate e Impacto</span
+                  >
+                  <p
+                    id="metricPriority"
+                    class="text-sm font-semibold text-slate-800 mt-1"
+                  >
+                    --
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Población / Estructuras Vulnerables -->
+            <div
+              class="p-3.5 rounded-lg bg-amber-50 border border-amber-200 text-sm"
+            >
+              <span class="font-bold text-amber-900"
+                >Objetivos Vulnerables Detectados:
+              </span>
+              <span id="metricTargets" class="text-amber-800">--</span>
+            </div>
+          </div>
+
+          <!-- Fallback texto plano si el modelo no retorna JSON -->
+          <div id="rawFallback" class="hidden space-y-3">
+            <h3 class="text-lg font-bold text-slate-800">
+              Resultado del Modelo
+            </h3>
+            <pre
+              id="rawTextOutput"
+              class="whitespace-pre-wrap text-sm bg-slate-50 p-4 rounded-lg border border-slate-200"
+            ></pre>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const dropzone = document.getElementById("dropzone");
+      const previewContainer = document.getElementById("previewContainer");
+      const imagePreview = document.getElementById("imagePreview");
+      const fileName = document.getElementById("fileName");
+      const changeImgBtn = document.getElementById("changeImgBtn");
+      const analyzeBtn = document.getElementById("analyzeBtn");
+      const btnText = document.getElementById("btnText");
+      const btnSpinner = document.getElementById("btnSpinner");
+      const errorBox = document.getElementById("errorBox");
+
+      const emptyState = document.getElementById("emptyState");
+      const reportContainer = document.getElementById("reportContainer");
+      const rawFallback = document.getElementById("rawFallback");
+
+      let selectedFile = null;
+
+      function handleFile(file) {
+        if (!file || !file.type.startsWith("image/")) return;
+        selectedFile = file;
+        fileName.textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imagePreview.src = e.target.result;
+          dropzone.classList.add("hidden");
+          previewContainer.classList.remove("hidden");
+          analyzeBtn.disabled = false;
+          errorBox.classList.add("hidden");
+        };
+        reader.readAsDataURL(file);
+      }
+
+      fileInput.addEventListener("change", (e) =>
+        handleFile(e.target.files[0]),
+      );
+      changeImgBtn.addEventListener("click", () => fileInput.click());
+
+      // Drag and drop
+      dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("border-blue-500", "bg-blue-50");
+      });
+      dropzone.addEventListener("dragleave", () => {
+        dropzone.classList.remove("border-blue-500", "bg-blue-50");
+      });
+      dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("border-blue-500", "bg-blue-50");
+        handleFile(e.dataTransfer.files[0]);
+      });
+
+      function styleSeverityBadge(severity) {
+        const badge = document.getElementById("severityBadge");
+        const level = (severity || "").toLowerCase();
+        badge.className =
+          "px-4 py-2 rounded-lg font-bold text-sm uppercase tracking-wide border ";
+
+        if (level === "high") {
+          badge.className += "bg-red-100 text-red-800 border-red-300";
+          badge.textContent = "SEVERIDAD: ALTA (HIGH)";
+        } else if (level === "medium") {
+          badge.className += "bg-amber-100 text-amber-800 border-amber-300";
+          badge.textContent = "SEVERIDAD: MEDIA (MEDIUM)";
+        } else {
+          badge.className += "bg-green-100 text-green-800 border-green-300";
+          badge.textContent = "SEVERIDAD: BAJA (LOW)";
+        }
+      }
+
+      analyzeBtn.addEventListener("click", async () => {
+        if (!selectedFile) return;
+
+        analyzeBtn.disabled = true;
+        btnText.textContent = "Analizando imagen...";
+        btnSpinner.classList.remove("hidden");
+        errorBox.classList.add("hidden");
+
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        try {
+          const response = await fetch("/analyze", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.detail || "Error al analizar la imagen");
+          }
+
+          emptyState.classList.add("hidden");
+
+          if (data.status === "success" && data.report) {
+            rawFallback.classList.add("hidden");
+            reportContainer.classList.remove("hidden");
+
+            const r = data.report;
+            document.getElementById("reportTimestamp").textContent =
+              "Generado el " + new Date().toLocaleString();
+
+            styleSeverityBadge(r.severity);
+
+            // Render bulletpoints
+            const reasonsList = document.getElementById("reasonsList");
+            reasonsList.innerHTML = "";
+            (r.reasons || []).forEach((reason) => {
+              const li = document.createElement("li");
+              li.className = "flex items-start gap-2";
+              li.innerHTML = `<span class="text-blue-600 font-bold">•</span><span>${reason}</span>`;
+              reasonsList.appendChild(li);
+            });
+
+            document.getElementById("evacuationText").textContent =
+              r.evacuation_zones || "No especificado";
+            document.getElementById("metricDepth").textContent =
+              r.estimated_water_depth || "No determinable";
+            document.getElementById("metricPassability").textContent =
+              r.vehicle_passability || "No determinable";
+            document.getElementById("metricHazards").textContent =
+              r.infrastructure_hazards || "Ninguno visible";
+            document.getElementById("metricPriority").textContent =
+              r.rescue_priority || "--";
+            document.getElementById("metricTargets").textContent =
+              r.vulnerable_targets || "No se observan objetivos inmediatos";
+          } else {
+            reportContainer.classList.add("hidden");
+            rawFallback.classList.remove("hidden");
+            document.getElementById("rawTextOutput").textContent =
+              data.raw_text;
+          }
+        } catch (err) {
+          errorBox.textContent = err.message;
+          errorBox.classList.remove("hidden");
+        } finally {
+          analyzeBtn.disabled = false;
+          btnText.textContent = "Generar Reporte de Inundación";
+          btnSpinner.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>
