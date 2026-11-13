@@ -19,7 +19,7 @@
         </span>
         <span><strong>FloodVision</strong></span>
       </a>
-      <div class="header-links"><span class="header-tag">GB10 / Qwen3-VL</span><span class="header-separator"></span></div>
+      <button id="language-toggle" class="export-btn language-toggle" type="button" aria-label="Cambiar idioma a español">Español</button>
     </div>
   </header>
 
@@ -49,7 +49,6 @@
             <input id="image-input" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
           </div>
           <div id="preview-list" class="preview-list" aria-live="polite"></div>
-          <div class="field-group dry-route"><div class="field-heading"><label>Dry-route walking estimate</label><span class="field-hint">OPTIONAL</span></div><label class="check-row"><input type="checkbox" id="route-verified"><span class="custom-check" aria-hidden="true">✓</span><span>I independently verified a dry, open route</span></label><div id="distance-group" class="distance-group" hidden><label for="route-distance">Verified dry-route distance (meters)</label><div class="input-wrap"><span class="field-symbol">↗</span><input type="number" id="route-distance" min="1" max="100000" placeholder="e.g. 500"><span class="unit">m</span></div></div><p class="helper">Photos alone cannot determine a safe escape route. The estimate is illustrative only.</p></div>
           <button class="analyze-btn" id="analyze-btn" type="submit"><span id="analyze-label">Analyze flood images</span><span class="button-arrow">→</span></button>
           <div class="privacy-note"> Images are processed by your configured GB10 server and removed from local temporary storage after each request.</div>
         </form>
@@ -60,11 +59,11 @@
         <div id="results-empty" class="results-empty"><div class="empty-visual"><div class="empty-grid"></div><svg viewBox="0 0 260 190" aria-hidden="true" fill="none"><path d="M19 110 64 69l25 23 37-51 54 55 19-20 42 34" stroke="#5ea5ac" stroke-opacity=".38" stroke-width="2" stroke-linejoin="round"/><path d="M18 126c26-15 44 15 70 0s43-15 69 0 43 15 70 0m-209 21c26-15 44 15 70 0s43-15 69 0 43 15 70 0" stroke="#3bdac8" stroke-width="2.5" stroke-linecap="round"/><path d="m128 73 0 65m-9-9 9 9 9-9" stroke="#3bdac8" stroke-opacity=".4" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="128" cy="94" r="63" stroke="#3bdac8" stroke-opacity=".12" stroke-dasharray="4 7"/></svg><div class="empty-floating">AWAITING IMAGERY <span class="blink">▌</span></div></div><h3>Ready when you are.</h3><p>Upload photos and select <strong>Analyze flood images</strong> to see a structured visual assessment powered by Qwen3-VL.</p><div class="result-features"><span>● Flood extent</span><span>● Hazard indicators</span><span>● Visual evidence</span><span>● Report export</span></div></div>
         <div id="results-loading" class="results-loading" hidden><div class="loader-orbit"></div><h3>Analyzing visible conditions</h3><p id="loading-caption">Reading visual evidence with Qwen3-VL on your GB10 server…</p><div class="loading-progress"><span></span></div><small>Large images and multi-image requests may take longer.</small></div>
         <div id="results-error" class="results-error" hidden role="alert"><div class="error-mark">!</div><h3>Analysis could not complete</h3><p id="error-message"></p><button id="retry-btn" type="button">Try again ↗</button></div>
-        <div id="results-success" class="results-success" hidden><div class="report-topline"><span class="report-ready"><span class="tiny-dot"></span> ANALYSIS COMPLETE</span><span id="report-time"></span></div><div id="report-tabs" class="report-tabs" role="tablist" aria-label="Image reports"></div><div id="report-content" role="region" aria-label="Selected image assessment"></div><div class="export-bar"><div><strong>Export this report</strong><span>Save the assessment for your records</span></div><div class="export-actions"><button id="download-json" class="export-btn" type="button">⇩ JSON</button><button id="download-markdown" class="export-btn primary" type="button">⇩ Markdown</button></div></div></div>
+        <div id="results-success" class="results-success" hidden><div class="report-topline"><span class="report-ready"><span class="tiny-dot"></span> ANALYSIS COMPLETE</span><span id="report-time"></span></div><div id="report-tabs" class="report-tabs" role="tablist" aria-label="Image reports"></div><div id="report-content" role="region" aria-label="Selected image assessment"></div><div class="export-bar"><div><strong>Export this report</strong><span>Save the assessment for your records</span></div><div class="export-actions"><button id="download-pdf" class="export-btn primary" type="button">⇩ PDF</button><button id="download-json" class="export-btn" type="button">⇩ JSON</button><button id="download-markdown" class="export-btn primary" type="button">⇩ Markdown</button></div></div></div>
       </div>
     </section>
 
-    <footer class="site-footer"><span>FLOODVISION <b>GB10</b> · LOCAL AI RESEARCH PROTOTYPE</span><span>DESIGNED FOR EVIDENCE, NOT CERTAINTY <span class="footer-dash">—</span> 2026</span></footer>
+    <footer class="site-footer"><span>FLOODVISION</span></footer>
   </main>
 </body>
 </html>

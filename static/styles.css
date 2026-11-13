@@ -9,3 +9,7 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 .refuge-figure{margin:16px 0}.refuge-image{position:relative;line-height:0}.refuge-image img{display:block;width:100%;height:auto;image-orientation:from-image;border-radius:6px}.refuge-marker{position:absolute;border:2px solid #ffe19b;background:#ffe19b18;pointer-events:none}.refuge-marker span{position:absolute;top:0;left:0;background:#ffe19b;color:#17242b;font:bold 13px/1.5 system-ui;min-width:22px;text-align:center}.refuge-candidate{border:1px solid var(--line);border-radius:7px;padding:13px;margin-top:10px}.refuge-candidate h5{font-size:14px;margin:0 0 8px;color:#ffe19b}.refuge-candidate p{font-size:12px;line-height:1.7;margin:7px 0;overflow-wrap:anywhere}
+
+.language-toggle{font-size:13px;padding:9px 16px}
+.pdf-frame{position:fixed;left:-10000px;top:0;width:800px;height:1100px;border:0}
+.export-actions{flex-wrap:wrap}

@@ -59,7 +59,6 @@ Browser — report cards, evidence lists, JSON / Markdown downloads
 - A focused individual-image workflow with plain-language findings, score explanations, and visible uncertainties.
 - The before/after selector and decorative radar have been removed from the web interface; the notebook and API retain comparison compatibility.
 - Supported formats: JPEG, PNG, WebP; up to 8 MB each, 20 MB combined.
-- Optional walking-time calculation for an independently verified dry route of known length.
 - Potential refuge candidates with approximate image boxes, visible evidence, and explicit access/structural uncertainties. Candidates are not verified safe destinations or routes.
 - Download reports in JSON and Markdown.
 - Images and intermediate job files are removed after the request finishes.
