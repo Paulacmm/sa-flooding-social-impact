@@ -106,8 +106,8 @@ def execute_notebook(config_path, workdir):
     if len(cells) != 1:
         raise RuntimeError("Engine notebook must contain one parameters cell")
     cells[0].source = f"CONFIG_PATH = {json.dumps(str(config_path))}"
-    runner = NotebookClient(notebook, timeout=240, kernel_name="python3", allow_errors=False,
-                            resources={"metadata": {"path": str(workdir)}})
+    runner = NotebookClient(notebook, timeout=300, kernel_name="python3", allow_errors=False,
+                            resources={"metadata": {"path": str(workdir)}}) #changing timeout
     runner.execute()
 
 
@@ -204,7 +204,9 @@ def main():
     port = int(os.getenv("WEB_PORT", "8765"))
     with ThreadingHTTPServer((host, port), Handler) as server:
         print(f"FloodVision → http://{host}:{port}", flush=True)
-        print(f"GB10 model → {os.getenv('GB10_BASE_URL', 'http://10.246.100.230/v1')}", flush=True)
+        #print(f"GB10 model → {os.getenv('GB10_BASE_URL', 'http://10.246.100.230/v1')}", flush=True)
+        # to make it work locally
+        print(f"Local model -> http://localhost:11434/v1 (qwen2.5vl:3b)", flush=True)
         server.serve_forever()
 
 
